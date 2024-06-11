@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   web:
-    image: ghcr.io/eclavijoyi/accions/flask-app:latest
+    image: ghcr.io/${GITHUB_REPOSITORY}/flask-app:latest
     ports:
       - "5000:5000"
     environment:
