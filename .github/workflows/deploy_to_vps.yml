@@ -44,10 +44,15 @@ jobs:
           chmod 600 key.pem
           # Copiar el archivo docker-compose.yml al VPS
           scp -o StrictHostKeyChecking=no -i key.pem docker-compose.yml $VPS_USER@$VPS_IP:/home/$VPS_USER/
+          # Verificar que el archivo se haya copiado correctamente
+          ssh -o StrictHostKeyChecking=no -i key.pem $VPS_USER@$VPS_IP "ls -l /home/$VPS_USER/docker-compose.yml"
           # Conectar al VPS y ejecutar los comandos docker-compose
           ssh -o StrictHostKeyChecking=no -i key.pem $VPS_USER@$VPS_IP << 'EOF'
             export GITHUB_REPOSITORY=${GITHUB_REPOSITORY}
             cd /home/$VPS_USER/
+            # Verificar el contenido del directorio y la variable de entorno
+            ls -l
+            echo "GITHUB_REPOSITORY=${GITHUB_REPOSITORY}"
             echo $GITHUB_TOKEN | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
             docker-compose down || true
             docker-compose pull
