@@ -38,6 +38,7 @@ jobs:
           VPS_IP: ${{ secrets.VPS_IP }}
           VPS_USER: ${{ secrets.VPS_USER }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
         run: |
           echo "${SSH_PRIVATE_KEY}" > key.pem
           chmod 600 key.pem
@@ -45,6 +46,7 @@ jobs:
           scp -o StrictHostKeyChecking=no -i key.pem docker-compose.yml $VPS_USER@$VPS_IP:/home/$VPS_USER/
           # Conectar al VPS y ejecutar los comandos docker-compose
           ssh -o StrictHostKeyChecking=no -i key.pem $VPS_USER@$VPS_IP << 'EOF'
+            export GITHUB_REPOSITORY=${GITHUB_REPOSITORY}
             cd /home/$VPS_USER/
             echo $GITHUB_TOKEN | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
             docker-compose down || true
